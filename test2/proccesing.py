@@ -4,6 +4,7 @@ import os
 
 
 def read_xml(path: str) -> str:
+    """The function gets path to xml file."""
     with open(path, 'r', encoding='utf-8') as file:
         xmlr = file.read()
     start = xmlr.find('</meta>') + len('</meta>\n')
@@ -12,11 +13,14 @@ def read_xml(path: str) -> str:
 
 
 def read_xml_full(path: str) -> tuple:
+    """The function gets path to xml file. Return """
     tree = ET.parse(os.path.join(path))
     return tree, tree.getroot()
 
 
 def datacollect(path: str) -> tuple:
+    """The function collects daa from xml file. Return dict with figures, classes from xml, minimal and maximal images,
+    number of images and marking images, counter with size of images."""
     root = read_xml(path)
     sizelst = []
     dct_class, dct_fig = dict(), dict()

@@ -1,7 +1,5 @@
-import os
 from pathlib import Path
 from proccesing import *
-from collections import Counter
 
 
 path = Path('data/')
