@@ -60,18 +60,19 @@ def getbrandsurl(filepath: str, num: int = 10) -> dict:
     return brandcar
 
 
-def getdata(name: str, href: str, dir: str, numphoto: int = 5) -> None:
+def getdata(name: str, href: str, folder: str, numphoto: int = 5) -> None:
     """The function gets name car, url to car, path to dir for save images and number of images."""
     getpage(url=href, name=f'{name}.html')
     with open(os.path.join(fullpath, f'{name}.html'), 'r', encoding='utf-8') as file:
         src = file.read()
     soup = BeautifulSoup(src, 'lxml')
-    images = soup.find_all(attrs={"class": 'ImageGalleryDesktop__itemContainer'})  # ImageGalleryDesktop__image-container 'ImageGalleryDesktop__image'
+    images = soup.find_all(attrs={"class": 'ImageGalleryDesktop__itemContainer'})
     for i, image in enumerate(images):
         if i == numphoto:
             break
         imgurl = 'https:' + image.find(class_='ImageGalleryDesktop__image').get('src')
-        Image.open(BytesIO(requests.get(imgurl).content)).convert("RGB").save(os.path.join(f'{dir}', f'{name}_{i}.jpg'))
+        Image.open(BytesIO(requests.get(imgurl).content)).convert("RGB").save(os.path.join(f'{folder}',
+                                                                                           f'{name}_{i}.jpg'))
     os.remove(os.path.join(fullpath, f'{name}.html'))
 
 
@@ -80,9 +81,9 @@ def getcar(branddct: dict, num: int = 10, numphoto: int = 5) -> None:
     for key, link in branddct.items():
         number = num
         print(f'Start download {key}')
-        dir = os.path.join(fullpath, key)
-        if not os.path.isdir(dir):
-            os.mkdir(dir)
+        folder = os.path.join(fullpath, key)
+        if not os.path.isdir(folder):
+            os.mkdir(folder)
 
         getpage(url=link, name=f"{key}.html")
         with open(os.path.join(fullpath, f'{key}.html'), 'r', encoding='utf-8') as file:
@@ -96,7 +97,7 @@ def getcar(branddct: dict, num: int = 10, numphoto: int = 5) -> None:
                 name = car.find(class_='Link ListingItemTitle__link').get_text('\n', strip=True)
                 name = name.replace('/', '_')
                 href = car.find(class_='Link ListingItemTitle__link').get('href')
-                getdata(name, href, numphoto=numphoto, dir=dir)
+                getdata(name, href, numphoto=numphoto, folder=folder)
                 number -= 1
                 if number == 0:
                     break
